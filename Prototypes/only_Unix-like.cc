@@ -5,8 +5,6 @@
 #include <cstring>
 #include <unistd.h>
 #include <termios.h>
-#include <fcntl.h>
-#include <sys/stat.h>
 #include <memory>
 
 void enterPassword(std::string &password)
@@ -206,6 +204,10 @@ void decryptData(const std::string &inputData, const std::string &outputData, co
                 nullptr, 0, nonce, key) != 0)
         {
             std::cerr << "Decryption failed" << std::endl;
+
+            // Delete the output file
+            if (outputData != "-")
+                std::remove(outputData.c_str());
             return;
         }
 
@@ -237,41 +239,36 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    bool isDecrypting = false;
+    bool isDecrypting = (std::strcmp(argv[1], "-d") == 0);
 
-    if (std::strcmp(argv[1], "-d") == 0)
+    if (isDecrypting)
     {
-        isDecrypting = true;
+        inData = argv[2];
+        outData = argv[3];
         if (argc == 5)
         {
             std::ofstream nullStream;
             std::clog.rdbuf(nullStream.rdbuf());
-            inData = argv[2];
-            outData = argv[3];
             password = argv[4];
         }
         else
         {
-            inData = argv[2];
-            outData = argv[3];
             enterPassword(password);
         }
     }
 
     else
     {
+        inData = argv[1];
+        outData = argv[2];
         if (argc == 4)
         {
             std::ofstream nullStream;
             std::clog.rdbuf(nullStream.rdbuf());
-            inData = argv[1];
-            outData = argv[2];
             password = argv[3];
         }
         else
         {
-            inData = argv[1];
-            outData = argv[2];
             enterPassword(password);
         }
     }

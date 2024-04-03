@@ -1,0 +1,12 @@
+./sodium/*
+./libsodium/*
+./sodium.h
+*.[0-9][0-9][0-9]
+*.out
+*.exe
+*.bat
+*.txt
+*.e
+*.lib
+*.pdb
+*.zip
